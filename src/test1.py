@@ -5,12 +5,13 @@ import os
 from random import random, uniform, seed
 from math import pi
 
-
+scale = 4
 width = 600
 height = 600
 
-surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width * scale, height * scale)
 ctx = cairo.Context(surface)
+surface.set_device_scale(scale, scale)
 
 
 def draw_line_from_sequence(ctx, points, color):
