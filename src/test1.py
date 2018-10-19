@@ -1,5 +1,6 @@
 # pylint: disable=E1101
 import cairo
+import os
 
 from random import random, uniform, seed
 from math import pi
@@ -66,7 +67,10 @@ def draw_lines(ctx, n_groups=3, n_lines=100):
             update_points(points)
             draw_line_from_sequence(ctx, points, color)
 
-# seed('aha')
+random_data = os.urandom(8)
+seed_value = int.from_bytes(random_data, byteorder="big")
+seed(seed_value)
+print('seed(%d)' % seed_value)
 
 set_background(ctx)
 circle_clip(ctx)
