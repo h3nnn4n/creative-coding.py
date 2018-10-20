@@ -1,4 +1,4 @@
-from colormath.color_objects import sRGBColor, LCHuvColor
+from colormath.color_objects import sRGBColor, LCHuvColor, XYZColor
 
 
 def lerp(a, b, c):
@@ -38,6 +38,13 @@ def color_to_tuple(a):
     if type(a) is sRGBColor:
         return (a.rgb_r, a.rgb_g, a.rgb_b)
 
+    if type(a) is XYZColor:
+        return (a.xyz_x, a.xyz_y, a.xyz_z)
+
 
 def tuple_to_LCHuvColor(a):
     return LCHuvColor(a[0], a[1], a[2])
+
+
+def tuple_to_XYZColor(a):
+    return XYZColor(a[0], a[1], a[2])

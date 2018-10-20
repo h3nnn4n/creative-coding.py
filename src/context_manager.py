@@ -2,8 +2,9 @@
 import cairo
 
 from colormath.color_conversions import convert_color
-from colormath.color_objects import sRGBColor, LCHuvColor
-from utils import lerp, color_lerp, normalize_rgb, tuple_to_LCHuvColor
+from colormath.color_objects import sRGBColor, LCHuvColor, XYZColor
+from utils import lerp, color_lerp, normalize_rgb, tuple_to_LCHuvColor, \
+    tuple_to_XYZColor
 
 
 class ContextManager:
@@ -48,6 +49,9 @@ class ContextManager:
         if mode == 'lch':
             return self.lerp_rgb_via_lch(a, b, p)
 
+        if mode == 'xyz':
+            return self.lerp_rgb_via_xyz(a, b, p)
+
         if mode == 'rgb':
             return color_lerp(a, b, p)
 
@@ -62,6 +66,24 @@ class ContextManager:
         color_b_lch = convert_color(color_b, LCHuvColor)
 
         color_c_lch = tuple_to_LCHuvColor(
+            color_lerp(color_a_lch, color_b_lch, p)
+        )
+
+        color_c = convert_color(color_c_lch, sRGBColor)
+
+        return (color_c.rgb_r, color_c.rgb_g, color_c.rgb_b)
+
+    def lerp_rgb_via_xyz(self, a, b, p):
+        a = normalize_rgb(a)
+        b = normalize_rgb(b)
+
+        color_a = sRGBColor(a[0], a[1], a[2])
+        color_b = sRGBColor(b[0], b[1], b[2])
+
+        color_a_lch = convert_color(color_a, XYZColor)
+        color_b_lch = convert_color(color_b, XYZColor)
+
+        color_c_lch = tuple_to_XYZColor(
             color_lerp(color_a_lch, color_b_lch, p)
         )
 

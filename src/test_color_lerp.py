@@ -12,14 +12,20 @@ def main():
     for x in range(0, context.width):
         color = context.lerp_rgb(color_a, color_b, x / context.width, mode='lch')
         context.set_source_rgb(color)
-        ctx.move_to(x, 0)
-        ctx.line_to(x, context.height / 2)
+        ctx.move_to(x, context.height * 0.00)
+        ctx.line_to(x, context.height * 0.33)
         ctx.stroke()
 
         color = context.lerp_rgb(color_a, color_b, x / context.width, mode='rgb')
         context.set_source_rgb(color)
-        ctx.move_to(x, context.height / 2)
-        ctx.line_to(x, context.height)
+        ctx.move_to(x, context.height * 0.33)
+        ctx.line_to(x, context.height * 0.66)
+        ctx.stroke()
+
+        color = context.lerp_rgb(color_a, color_b, x / context.width, mode='xyz')
+        context.set_source_rgb(color)
+        ctx.move_to(x, context.height * 0.66)
+        ctx.line_to(x, context.height * 1.00)
         ctx.stroke()
 
     context.save('color_test.png')
