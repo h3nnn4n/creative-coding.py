@@ -30,6 +30,15 @@ class Particle:
     def set_life(self, life):
         self.life = life
 
+        if self.life > 0:
+            self.alive = True
+
+        return self
+
+    def stop(self):
+        self.velocity.zero()
+        self.acceleration.zero()
+
         return self
 
     def set_max_velocity(self, max_velocity):

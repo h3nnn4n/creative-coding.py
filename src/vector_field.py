@@ -18,19 +18,22 @@ class VectorField:
         self.width = 600
         self.height = 600
 
-        self.noise_scale = 0.025
-        self.noise_block_width = 5
+        self.noise_scale = 0.0125
+        self.noise_block_width = 10
         self.noise_map = np.zeros((
             self.width,
             self.height
         ))
 
+        self.particle_life = 100
+        self.particle_max_velocity = 4
+
         self.n_particles = 100
         self.particles = [
             Particle().set_bounds(Vector(self.width, self.height))
                       .random_position(self.width, self.height)
-                      .set_life(2000)
-                      .set_max_velocity(5)
+                      .set_life(self.particle_life)
+                      .set_max_velocity(self.particle_max_velocity)
             for _ in range(self.n_particles)
         ]
 
@@ -50,8 +53,16 @@ class VectorField:
 
         return self.noise_map[x, y]
 
-    def set_background(self):
-        self.ctx.set_source_rgb(0, 0, 0)
+    def set_source_rgb(self, r=1, g=1, b=1, a=1):
+        if max(r, g, b) > 1:
+            r /= 255
+            g /= 255
+            b /= 255
+
+        self.ctx.set_source_rgba(r, g, b, a)
+
+    def set_background(self, r, g, b):
+        self.set_source_rgb(r, r, b)
         self.ctx.rectangle(0, 0, self.width, self.height)
         self.ctx.fill()
 
@@ -123,18 +134,34 @@ class VectorField:
 
         return Vector().from_angle(angle).set_mag(2)
 
-    def step(self, n=1):
-        for _ in range(n):
+    def step(self, n=1, log_interval=None):
+        if log_interval is not None:
+            print('step %6.2f%%' % (0))
+
+        for i in range(n):
             for particle in self.particles:
                 if not particle.alive:
-                    continue
+                    particle.random_position(self.width, self.height) \
+                            .set_life(self.particle_life) \
+                            .stop()
 
                 particle.apply_force(self.get_force(particle.position))
                 particle.step()
                 self.draw_particle(particle)
 
+            if log_interval is not None and (i % log_interval == 0 or i == n - 1) and i > 0:
+                print('step %6.2f%%' % ((i / n) * 100))
+
+        print('step %6.2f%%' % (100))
+
     def draw_particle(self, particle):
-        self.ctx.set_source_rgb(1, 0, 0)
+        color_scale = 0.25
+        self.set_source_rgb(
+            64 * color_scale,
+            224 * color_scale,
+            208 * color_scale,
+            0.025
+        )
         self.ctx.set_line_width(1)
         self.ctx.move_to(particle.position_old.x, particle.position_old.y)
         self.ctx.line_to(particle.position.x, particle.position.y)
@@ -142,8 +169,8 @@ class VectorField:
 
 
 vf = VectorField()
-vf.set_background()
+vf.set_background(250, 235, 215)
 vf.init_noise()
-vf.draw_noise()
-vf.step(n=100)
+# vf.draw_noise()
+vf.step(n=5000, log_interval=100)
 vf.save()
