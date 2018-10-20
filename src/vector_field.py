@@ -18,8 +18,8 @@ class VectorField:
         self.width = 600
         self.height = 600
 
-        self.noise_scale = 0.075
-        self.noise_block_width = 5
+        self.noise_scale = 0.0125
+        self.noise_block_width = 1
         self.noise_map = np.zeros((
             self.width,
             self.height
@@ -98,7 +98,7 @@ class VectorField:
                 self.noise_map[i][j] = (
                     (self.noise_map[i][j] - self.noise_range[0]) /
                     (self.noise_range[1] - self.noise_range[0])
-                ) * amplitude
+                ) * amplitude - pi / 2
 
     def draw_noise(self):
         for i in range(ceil(self.width / self.noise_block_width)):
@@ -178,12 +178,12 @@ class VectorField:
         return (a * c) + (1 - c) * b
 
     def draw_particle(self, particle):
-        color_scale = 0.5
+        color_scale = 0.75
         self.set_source_rgb(
             particle.color[0] * color_scale,
             particle.color[1] * color_scale,
             particle.color[2] * color_scale,
-            0.125 * 0.8
+            0.125 * 0.65
         )
         self.ctx.set_line_width(1)
         self.ctx.move_to(particle.position_old.x, particle.position_old.y)
