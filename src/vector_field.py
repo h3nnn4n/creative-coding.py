@@ -55,7 +55,7 @@ class VectorField:
         self.width = 600
         self.height = 600
 
-        self.noise_scale = 0.025
+        self.noise_scale = 0.0125
         self.noise_block_width = 2
         self.noise_map = np.zeros((
             self.width,
@@ -91,18 +91,31 @@ class VectorField:
                     i * self.noise_scale,
                     j * self.noise_scale,
                     octaves=4,
-                    persistence=0.75,
+                    persistence=0.5,
+                    lacunarity=2.25,
                     repeatx=(self.width / self.noise_block_width) * self.noise_scale,
                     repeaty=(self.height / self.noise_block_width) * self.noise_scale
-                ) * 2.0 * pi
+                )
+
+        self.update_noise_interval()
+        self.normalize_noise(amplitude=2.0 * pi)
+        self.update_noise_interval()
+
+    def normalize_noise(self, amplitude=1):
+        for i in range(ceil(self.width / self.noise_block_width)):
+            for j in range(ceil(self.height / self.noise_block_width)):
+                self.noise_map[i][j] = (
+                    (self.noise_map[i][j] - self.noise_range[0]) /
+                    (self.noise_range[1] - self.noise_range[0])
+                ) * amplitude
 
     def draw_noise(self):
         for i in range(ceil(self.width / self.noise_block_width)):
             for j in range(ceil(self.height / self.noise_block_width)):
                 self.ctx.set_source_rgb(
-                    self.noise_map[i][j] / 2.0 * pi,
-                    self.noise_map[i][j] / 2.0 * pi,
-                    self.noise_map[i][j] / 2.0 * pi
+                    self.noise_map[i][j] / (2.0 * pi),
+                    self.noise_map[i][j] / (2.0 * pi),
+                    self.noise_map[i][j] / (2.0 * pi)
                 )
                 self.ctx.rectangle(
                     i * self.noise_block_width,
@@ -113,11 +126,19 @@ class VectorField:
                 self.ctx.stroke_preserve()
                 self.ctx.fill()
 
+    def update_noise_interval(self):
+        low = float('inf')
+        high = float('-inf')
+
+        for i in range(ceil(self.width / self.noise_block_width)):
+            for j in range(ceil(self.height / self.noise_block_width)):
+                low = min(low, self.noise_map[i][j])
+                high = max(high, self.noise_map[i][j])
+
+        self.noise_range = (low, high)
 
 vf = VectorField()
 vf.set_background()
 vf.init_noise()
 vf.draw_noise()
 vf.save()
-
-print(vf.noise_map)
