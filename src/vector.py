@@ -1,4 +1,5 @@
 import numpy as np
+from math import cos, sin, pi
 
 
 class Vector:
@@ -23,21 +24,21 @@ class Vector:
         return Vector(self.x + other.x, self.y + other.y)
 
     def __iadd__(self, other):
-        self = self + other
+        self = Vector(self.x + other.x, self.y + other.y)
         return self
 
     def __sub__(self, other):
         return Vector(self.x - other.x, self.y - other.y)
 
     def __isub__(self, other):
-        self = self - other
+        self = Vector(self.x - other.x, self.y - other.y)
         return self
 
     def __mul__(self, other):
         return Vector(self.x * other, self.y * other)
 
     def __imul__(self, other):
-        self = self * other
+        self = Vector(self.x * other, self.y * other)
         return self
 
     def __str__(self):
@@ -49,17 +50,40 @@ class Vector:
     def normalize(self):
         self.data = self.data / self.norm
 
+        return self
+
     @property
     def norm(self):
-        return np.sqrt((np.sum(self.data ** 2)))
+        return np.sqrt(np.sum(self.data ** 2))
+
+    def limit(self, mag):
+        if self.norm > mag:
+            self.set_mag(mag)
+
+        return self
 
     def set_mag(self, mag):
         self.normalize()
-        self *= mag
+        self.set(self * mag)
+        return self
 
     def zero(self):
         self.x = 0
         self.y = 0
+
+        return self
+
+    def set(self, other):
+        self.x = other.x
+        self.y = other.y
+
+        return self
+
+    def from_angle(self, angle, length=1):
+        self.x = length * cos(angle)
+        self.y = length * sin(angle)
+
+        return self
 
     x = property(get_x, set_x)
     y = property(get_y, set_y)

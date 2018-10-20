@@ -18,16 +18,19 @@ class VectorField:
         self.width = 600
         self.height = 600
 
-        self.noise_scale = 0.0125
-        self.noise_block_width = 2
+        self.noise_scale = 0.025
+        self.noise_block_width = 5
         self.noise_map = np.zeros((
             self.width,
             self.height
         ))
 
-        self.n_particles = 10
+        self.n_particles = 100
         self.particles = [
-            Particle()
+            Particle().set_bounds(Vector(self.width, self.height))
+                      .random_position(self.width, self.height)
+                      .set_life(2000)
+                      .set_max_velocity(5)
             for _ in range(self.n_particles)
         ]
 
@@ -38,6 +41,14 @@ class VectorField:
         )
         self.surface.set_device_scale(self.scale, self.scale)
         self.ctx = cairo.Context(self.surface)
+
+    def __getitem__(self, key):
+        x, y = key
+
+        if x >= len(self.noise_map) or y >= len(self.noise_map[x]):
+            return None
+
+        return self.noise_map[x, y]
 
     def set_background(self):
         self.ctx.set_source_rgb(0, 0, 0)
@@ -105,21 +116,34 @@ class VectorField:
         x = floor(x / self.noise_block_width)
         y = floor(y / self.noise_block_width)
 
-        angle = self.noise_map[x, y]
+        angle = self[x, y]
 
-        return Vector().from_angle(angle)
+        if angle is None:
+            return None
+
+        return Vector().from_angle(angle).set_mag(2)
 
     def step(self, n=1):
         for _ in range(n):
             for particle in self.particles:
+                if not particle.alive:
+                    continue
+
                 particle.apply_force(self.get_force(particle.position))
                 particle.step()
+                self.draw_particle(particle)
+
+    def draw_particle(self, particle):
+        self.ctx.set_source_rgb(1, 0, 0)
+        self.ctx.set_line_width(1)
+        self.ctx.move_to(particle.position_old.x, particle.position_old.y)
+        self.ctx.line_to(particle.position.x, particle.position.y)
+        self.ctx.stroke()
 
 
 vf = VectorField()
-# vf.set_background()
+vf.set_background()
 vf.init_noise()
-# vf.draw_noise()
-# vf.save()
-
-vf.step(n=10)
+vf.draw_noise()
+vf.step(n=100)
+vf.save()

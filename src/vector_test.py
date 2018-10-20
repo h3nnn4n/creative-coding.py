@@ -1,5 +1,6 @@
 import pytest
 from vector import Vector
+from math import pi
 
 
 def test_add():
@@ -60,7 +61,7 @@ def test_isub():
     assert b.y == 4
 
 
-def test_set():
+def test_setter():
     a = Vector()
 
     assert a.x == 0
@@ -118,7 +119,46 @@ def test_zero():
 
 def test_set_mag():
     a = Vector(3, 4)
+    a.set_mag(2)
+    assert a.norm == 2
+    a.set_mag(5)
+    assert a.norm == 5
     a.set_mag(1)
     assert a.norm == 1
-    a.set_mag(5)
+
+
+def test_limit():
+    a = Vector(3, 4)
+    assert a.norm == 5
+
+    a.limit(10)
+    assert a.norm == 5
+
+    a.limit(3)
+    assert a.norm == 3
+
+    a.limit(1)
     assert a.norm == 1
+
+
+def test_from_angle():
+    a = Vector().from_angle(0)
+    assert abs(a.x - 1) < 1e-10
+    assert abs(a.y - 0) < 1e-10
+
+    a = Vector().from_angle(pi / 2)
+    assert abs(a.x - 0) < 1e-10
+    assert abs(a.y - 1) < 1e-10
+
+    a = Vector().from_angle(pi)
+    assert abs(a.x - -1) < 1e-10
+    assert abs(a.y - 0) < 1e-10
+
+
+def test_set():
+    a = Vector(1, 2)
+    b = Vector(5, 4)
+    a.set(b)
+
+    assert a.x == b.x
+    assert a.y == b.y
