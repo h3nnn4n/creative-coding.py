@@ -4,41 +4,11 @@ import os
 
 import numpy as np
 
+from vector import Vector
+
 from noise import snoise2, pnoise2
 from random import random, uniform, seed
-from math import pi, sin, cos, sqrt, ceil
-
-
-class Vector:
-    def __init__(self, x=0, y=0):
-        self.data = np.zeros(2)
-
-    def set_x(self, x):
-        self.data[0] = x
-
-    def set_y(self, y):
-        self.data[1] = y
-
-    def get_x(self):
-        return self.data[0]
-
-    def get_y(self):
-        return self.data[1]
-
-    def __add__(self, other):
-        self.x += other.x
-        self.y += other.y
-
-    def __sub__(self, other):
-        self.x -= other.x
-        self.y -= other.y
-
-    def zero(self):
-        self.x = 0
-        self.y = 0
-
-    x = property(get_x, set_x)
-    y = property(get_y, set_y)
+from math import pi, sin, cos, sqrt, ceil, floor
 
 
 class Particle:
@@ -47,6 +17,15 @@ class Particle:
         self.position_old = Vector()
         self.velocity = Vector()
         self.acceleration = Vector()
+        # self.max_velocity = 2
+
+    def step(self):
+        self.velocity += self.acceleration
+        self.position += self.velocity
+        self.acceleration *= 0
+
+    def apply_force(self, force):
+        self.acceleration += force
 
 
 class VectorField:
@@ -137,8 +116,26 @@ class VectorField:
 
         self.noise_range = (low, high)
 
+    def get_force(self, position):
+        x, y = position.data
+        x = floor(x / self.noise_block_width)
+        y = floor(y / self.noise_block_width)
+
+        angle = self.noise_map[x, y]
+
+        return Vector().from_angle(angle)
+
+    def step(self, n=1):
+        for _ in range(n):
+            for particle in self.particles:
+                particle.apply_force(self.get_force(particle.position))
+                particle.step()
+
+
 vf = VectorField()
-vf.set_background()
+# vf.set_background()
 vf.init_noise()
-vf.draw_noise()
-vf.save()
+# vf.draw_noise()
+# vf.save()
+
+vf.step(n=10)
