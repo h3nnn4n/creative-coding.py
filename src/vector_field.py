@@ -18,22 +18,19 @@ class VectorField:
         self.width = 600
         self.height = 600
 
-        self.noise_scale = 0.0125
-        self.noise_block_width = 10
+        self.noise_scale = 0.075
+        self.noise_block_width = 5
         self.noise_map = np.zeros((
             self.width,
             self.height
         ))
 
-        self.particle_life = 100
+        self.particle_life = 12
         self.particle_max_velocity = 4
 
         self.n_particles = 100
         self.particles = [
-            Particle().set_bounds(Vector(self.width, self.height))
-                      .random_position(self.width, self.height)
-                      .set_life(self.particle_life)
-                      .set_max_velocity(self.particle_max_velocity)
+            self.spawn_particle()
             for _ in range(self.n_particles)
         ]
 
@@ -52,6 +49,15 @@ class VectorField:
             return None
 
         return self.noise_map[x, y]
+
+    def spawn_particle(self):
+        return (
+            Particle().set_bounds(Vector(self.width, self.height))
+                      .random_position(self.width, self.height)
+                      .set_life(self.particle_life)
+                      .set_max_velocity(self.particle_max_velocity)
+                      .set_color(self.get_color)
+        )
 
     def set_source_rgb(self, r=1, g=1, b=1, a=1):
         if max(r, g, b) > 1:
@@ -75,9 +81,9 @@ class VectorField:
                 self.noise_map[i][j] = pnoise2(
                     i * self.noise_scale,
                     j * self.noise_scale,
-                    octaves=4,
-                    persistence=0.5,
-                    lacunarity=2.25,
+                    octaves=10,
+                    persistence=0.35,
+                    lacunarity=2.0,
                     repeatx=(self.width / self.noise_block_width) * self.noise_scale,
                     repeaty=(self.height / self.noise_block_width) * self.noise_scale
                 )
@@ -141,9 +147,7 @@ class VectorField:
         for i in range(n):
             for particle in self.particles:
                 if not particle.alive:
-                    particle.random_position(self.width, self.height) \
-                            .set_life(self.particle_life) \
-                            .stop()
+                    continue
 
                 particle.apply_force(self.get_force(particle.position))
                 particle.step()
@@ -152,15 +156,34 @@ class VectorField:
             if log_interval is not None and (i % log_interval == 0 or i == n - 1) and i > 0:
                 print('step %6.2f%%' % ((i / n) * 100))
 
+            for k, v in enumerate(self.particles):
+                if not v.alive:
+                    self.particles[k] = self.spawn_particle()
+
         print('step %6.2f%%' % (100))
 
+    def get_color(self, i):
+        a = (178, 34, 34)
+        b = (64, 224, 208)
+
+        v = i / self.height
+
+        return (
+            self.lerp(a[0], b[0], v),
+            self.lerp(a[1], b[1], v),
+            self.lerp(a[2], b[2], v)
+        )
+
+    def lerp(self, a, b, c):
+        return (a * c) + (1 - c) * b
+
     def draw_particle(self, particle):
-        color_scale = 0.25
+        color_scale = 0.5
         self.set_source_rgb(
-            64 * color_scale,
-            224 * color_scale,
-            208 * color_scale,
-            0.025
+            particle.color[0] * color_scale,
+            particle.color[1] * color_scale,
+            particle.color[2] * color_scale,
+            0.125 * 0.8
         )
         self.ctx.set_line_width(1)
         self.ctx.move_to(particle.position_old.x, particle.position_old.y)
@@ -168,9 +191,10 @@ class VectorField:
         self.ctx.stroke()
 
 
-vf = VectorField()
-vf.set_background(250, 235, 215)
-vf.init_noise()
-# vf.draw_noise()
-vf.step(n=5000, log_interval=100)
-vf.save()
+if __name__ == '__main__':
+    vf = VectorField()
+    vf.set_background(250, 235, 215)
+    vf.init_noise()
+    # vf.draw_noise()
+    vf.step(n=5000, log_interval=100)
+    vf.save()

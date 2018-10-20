@@ -35,6 +35,11 @@ class Particle:
 
         return self
 
+    def set_color(self, callback):
+        self.color = callback(self.position.y)
+
+        return self
+
     def stop(self):
         self.velocity.zero()
         self.acceleration.zero()
