@@ -3,15 +3,19 @@ import cairo
 import os
 
 from random import random, uniform, seed
-from math import pi
+from math import pi, sin, cos, sqrt
 
 scale = 4
 width = 600
 height = 600
 
 surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width * scale, height * scale)
-ctx = cairo.Context(surface)
 surface.set_device_scale(scale, scale)
+ctx = cairo.Context(surface)
+
+surface_mask = cairo.ImageSurface(cairo.FORMAT_ARGB32, width * scale, height * scale)
+surface_mask.set_device_scale(scale, scale)
+ctx_mask = cairo.Context(surface_mask)
 
 
 def draw_line_from_sequence(ctx, points, color):
@@ -98,28 +102,75 @@ def circle_thing(ctx, x=None, y=None, r=None):
 # seed(seed_value)
 # print('seed(%d)' % seed_value)
 
-seed(729890378782812217)
+# seed(729890378782812217)
+# seed(12584113332985461323)
+seed(16844609366066532813)
 
 set_background(ctx)
-circle_thing(ctx)
 
-circles = [
-    (width * 0.16, height * 0.14, width * 0.11),
-    (width * 0.70, height * 0.12, width * 0.09),
-    (width * 0.46, height * 0.86, width * 0.04),
-    (width * 0.89, height * 0.52, width * 0.16),
-]
+ctx_mask.set_source_rgba(255 / 255, 255 / 255, 255 / 255, 0)
+ctx_mask.rectangle(0, 0, width, height)
+ctx_mask.fill()
 
-for x, y, r in circles:
-    circle_thing(
-        ctx,
-        x=x,
-        y=y,
-        r=r
-    )
+# set_background(ctx_mask)
+
+# circle_thing(ctx)
+
+# circles = [
+#     (width * 0.50, height * 0.39, width * 0.15),
+#     (width * 0.35, height * 0.65, width * 0.15),
+#     (width * 0.65, height * 0.65, width * 0.15)
+# ]
+
+# for x, y, r in circles:
+#     circle_thing(
+#         ctx,
+#         x=x,
+#         y=y,
+#         r=r
+#     )
+
+x_center = width / 2
+y_center = height / 2
+radius = width * 0.20
+points = 3
+angle_step = 2.0 * pi / points
+circle_radius = sqrt(2 * (radius ** 2) - 2 * (radius ** 2) * cos(angle_step)) / 2
+
+for i in range(points):
+    angle = angle_step * i
+    x = x_center + radius * sin(angle)
+    y = y_center + radius * cos(angle)
+
+    # circle_thing(
+    #     ctx,
+    #     x=x,
+    #     y=y,
+    #     r=circle_radius
+    # )
+
+    ctx_mask.set_source_rgba(0.5, 0, 0, 0.5)
+    ctx_mask.arc(x, y, circle_radius, 0, 2 * pi)
+    ctx_mask.fill()
+
+circle_thing(
+    ctx,
+    x=x_center,
+    y=y_center,
+    r=radius - circle_radius
+)
+
+ctx_mask.set_source_rgba(0.5, 0, 0, 0.5)
+ctx_mask.arc(x_center, y_center, radius - circle_radius, 0, 2 * pi)
+ctx_mask.fill()
+
+ctx.mask_surface(surface_mask)
 
 draw_lines(ctx, n_lines=500)
 
-circle_thing(ctx, width * 0.12, height * 0.89, width * 0.04)
+# ctx.mask_surface(surface_mask)
+
+# circle_thing(ctx, width * 0.12, height * 0.89, width * 0.04)
 
 surface.write_to_png('rectangle.png')
+surface_mask.write_to_png('rectangle_mask.png')
