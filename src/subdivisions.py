@@ -1,7 +1,7 @@
 from context_manager import ContextManager
 from color_manager import ColorManager
 from particle import Particle
-from utils import lerp
+from utils import lerp, random_name
 from random import uniform
 
 
@@ -14,6 +14,8 @@ class Subdivision:
         self.n_particles = 3
         self.particles = []
 
+        self.color_name = 'thistle'
+
     def spawn_particle(self):
         return Particle()
 
@@ -22,6 +24,10 @@ class Subdivision:
             self.spawn_particle()
             for _ in range(self.n_particles)
         ]
+        return self
+
+    def set_color(self, color_name):
+        self.color_name = color_name
         return self
 
     def initial_placement(self, points=[]):
@@ -47,11 +53,11 @@ class Subdivision:
         ctx.close_path()
         ctx.set_line_width(1)
         self.context.set_source_rgb(
-            ColorManager().get_color('thistle', alpha=alpha * 2)
+            ColorManager().get_color(self.color_name, alpha=alpha * 2)
         )
         ctx.stroke_preserve()
         self.context.set_source_rgb(
-            ColorManager().get_color('thistle', alpha=alpha)
+            ColorManager().get_color(self.color_name, alpha=alpha)
         )
         ctx.fill()
 
@@ -78,7 +84,6 @@ class Subdivision:
 
 
 def main():
-    # color_manager = ColorManager()
     context = ContextManager()
     context.set_background(
         ColorManager().get_color('cornsilk')
@@ -87,17 +92,31 @@ def main():
         context=context,
         width=context.width,
         height=context.height
-    ).spawn_particles() \
-     .initial_placement(
-        [
-            (context.width * 0.5, context.height * 0.1),
-            (context.width * 0.3, context.height * 0.5),
-            (context.width * 0.5, context.height * 0.9)
-        ]
     )
-    subdivision.step(n=12)
 
-    context.save('subdivisions.png')
+    diff = 5
+
+    subdivision \
+        .spawn_particles() \
+        .set_color('steel blue') \
+        .initial_placement([
+            (context.width * 0.5 - diff, context.height * 0.1),
+            (context.width * 0.3 - diff, context.height * 0.5),
+            (context.width * 0.5 - diff, context.height * 0.9)]) \
+        .step(n=12)
+
+    subdivision \
+        .spawn_particles() \
+        .set_color('orange red') \
+        .initial_placement([
+            (context.width * 0.5 + diff, context.height * 0.1),
+            (context.width * 0.7 + diff, context.height * 0.5),
+            (context.width * 0.5 + diff, context.height * 0.9)]) \
+        .step(n=12)
+
+    context.save(random_name(
+        prefix='subdivision'
+    ))
 
 if __name__ == '__main__':
     main()
