@@ -45,7 +45,10 @@ class ContextManager:
 
     def set_source_rgb(self, r=1, g=1, b=1, a=1):
         if type(r) == tuple:
-            r, g, b, a = normalize_rgb(r)
+            if len(r) == 3:
+                r, g, b = normalize_rgb(r)
+            else:
+                r, g, b, a = normalize_rgb(r)
         else:
             r, g, b, a = normalize_rgb(r, g, b, a)
         self.ctx.set_source_rgba(r, g, b, a)
