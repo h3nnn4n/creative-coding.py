@@ -36,7 +36,7 @@ class Particle:
         return self
 
     def set_color(self, callback):
-        self.color = callback(self.position.y)
+        self.color = callback(self)
 
         return self
 

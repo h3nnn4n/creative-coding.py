@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 
+from context_manager import ContextManager
 from vector import Vector
 from particle import Particle
 
@@ -14,9 +15,12 @@ from math import pi, sin, cos, sqrt, ceil, floor
 
 class VectorField:
     def __init__(self):
-        self.scale = 4
-        self.width = 600
-        self.height = 600
+        self.context_manager = ContextManager()
+        self.ctx = self.context_manager.ctx
+        self.surface = self.context_manager.surface
+        self.scale = self.context_manager.scale
+        self.width = self.context_manager.width
+        self.height = self.context_manager.height
 
         self.noise_scale = 0.0125
         self.noise_block_width = 1
@@ -33,14 +37,6 @@ class VectorField:
             self.spawn_particle()
             for _ in range(self.n_particles)
         ]
-
-        self.surface = cairo.ImageSurface(
-            cairo.FORMAT_ARGB32,
-            self.width * self.scale,
-            self.height * self.scale
-        )
-        self.surface.set_device_scale(self.scale, self.scale)
-        self.ctx = cairo.Context(self.surface)
 
     def __getitem__(self, key):
         x, y = key
@@ -162,17 +158,19 @@ class VectorField:
 
         print('step %6.2f%%' % (100))
 
-    def get_color(self, i):
+    def get_color(self, particle):
         a = (178, 34, 34)
         b = (64, 224, 208)
 
-        v = i / self.height
+        x = particle.position.x
+        v = particle.position.y / self.height
 
-        return (
-            self.lerp(a[0], b[0], v),
-            self.lerp(a[1], b[1], v),
-            self.lerp(a[2], b[2], v)
-        )
+        if x < self.width * (1 / 3):
+            return self.context_manager.lerp_rgb(a, b, v, mode='xyz')
+        elif x < self.width * (2 / 3):
+            return self.context_manager.lerp_rgb(a, b, v, mode='rgb')
+        else:
+            return self.context_manager.lerp_rgb(a, b, v, mode='lch')
 
     def lerp(self, a, b, c):
         return (a * c) + (1 - c) * b
