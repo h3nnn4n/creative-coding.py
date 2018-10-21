@@ -1,5 +1,5 @@
 import numpy as np
-from math import cos, sin, pi
+from math import cos, sin, pi, atan2
 
 
 class Vector:
@@ -55,6 +55,10 @@ class Vector:
     @property
     def norm(self):
         return np.sqrt(np.sum(self.data ** 2))
+
+    @property
+    def heading(self):
+        return atan2(self.y, self.x)
 
     def dist(self, other):
         return (

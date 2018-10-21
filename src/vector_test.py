@@ -176,3 +176,14 @@ def test_dist():
 
     assert a.dist(b) == 5
     assert b.dist(a) == 5
+
+
+def test_heading():
+    a = Vector(1, 0)
+    assert a.heading == 0
+
+    a = Vector(0, 1)
+    assert abs(a.heading - pi / 2) < 1e-10
+
+    a = Vector(-1, 0)
+    assert abs(a.heading - pi) < 1e-10
