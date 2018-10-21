@@ -205,6 +205,7 @@ class VectorFieldBrush:
 
     def circle(self, center_x, center_y, radius, color, steps=250):
         ctx = self.ctx
+        self.color = color
         self.set_bounds(radius * 2, radius * 2)
         self.spawn_particles()
 

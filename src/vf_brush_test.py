@@ -9,7 +9,7 @@ def main():
         context.width / 2,
         context.height / 2,
         50,
-        (255, 0, 0)
+        (0, 0, 255)
     )
 
     context.save('vf_brush.png')
