@@ -30,12 +30,8 @@ class Subdivision:
             self.particles[k].position.y = y
         return self
 
-    def draw(self):
+    def draw(self, alpha=0.1):
         ctx = self.context.ctx
-        ctx.set_line_width(1)
-        self.context.set_source_rgb(
-            ColorManager().get_color('thistle', alpha=0.1025)
-        )
 
         ctx.move_to(
             self.particles[0].position.x,
@@ -49,7 +45,14 @@ class Subdivision:
             )
 
         ctx.close_path()
+        ctx.set_line_width(1)
+        self.context.set_source_rgb(
+            ColorManager().get_color('thistle', alpha=alpha * 2)
+        )
         ctx.stroke_preserve()
+        self.context.set_source_rgb(
+            ColorManager().get_color('thistle', alpha=alpha)
+        )
         ctx.fill()
 
     def split(self):
@@ -64,6 +67,14 @@ class Subdivision:
                     lerp(a.y, b.y, 0.5) + uniform(-scale, scale)
                 )
             )
+
+    def step(self, n=1):
+        if len(self.particles) == self.n_particles:
+            self.draw()
+
+        for _ in range(n):
+            self.split()
+            self.draw(alpha=0.075)
 
 
 def main():
@@ -84,10 +95,7 @@ def main():
             (context.width * 0.5, context.height * 0.9)
         ]
     )
-    subdivision.draw()
-    for _ in range(5):
-        subdivision.split()
-        subdivision.draw()
+    subdivision.step(n=12)
 
     context.save('subdivisions.png')
 
