@@ -1,5 +1,6 @@
 from context_manager import ContextManager
 from color_manager import ColorManager
+from vector_field_background import VectorFieldBackground
 from particle import Particle
 from utils import lerp, random_name
 from random import uniform
@@ -88,6 +89,14 @@ def main():
     context.set_background(
         ColorManager().get_color('cornsilk')
     )
+    (
+        VectorFieldBackground(context=context)
+        .set_noise_block_width(5)
+        .set_noise_scale(0.0125)
+        .init_noise()
+        .draw_vectors()
+    )
+
     subdivision = Subdivision(
         context=context,
         width=context.width,
