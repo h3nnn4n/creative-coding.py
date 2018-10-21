@@ -138,16 +138,19 @@ class VectorFieldBackground:
         return self
 
     def draw_vector(self, x, y):
+        if random() < 0.35:
+            return
+
         half_block = self.noise_block_width / 2
         self.context_manager.set_source_rgb(
             color_lerp(
                 color_lerp(
                     ColorManager().get_color('cornsilk'),
                     (0, 0, 0),
-                    0.9
+                    0.975
                 ),
                 (1, 1, 1),
-                0.9
+                0.975
             )
         )
         ctx = self.context_manager.ctx
@@ -164,8 +167,13 @@ class VectorFieldBackground:
             .set_mag(self.noise_block_width * 0.8)
             .data
         )
-        ctx.move_to(from_x, from_y)
-        ctx.line_to(from_x + to_x, from_y + to_y)
+        # ctx.move_to(from_x, from_y)
+        # ctx.line_to(from_x + to_x, from_y + to_y)
+        ctx.arc(from_x + to_x, from_y + to_y, half_block, 0, 2.0 * pi)
         # print(from_x, from_y, to_x, to_y)
+
+        if random() < 0.15:
+            ctx.fill_preserve()
+
         ctx.stroke()
         # ctx.restore()
