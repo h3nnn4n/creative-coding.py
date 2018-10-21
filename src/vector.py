@@ -56,6 +56,14 @@ class Vector:
     def norm(self):
         return np.sqrt(np.sum(self.data ** 2))
 
+    def dist(self, other):
+        return (
+            other
+            .copy()
+            .__sub__(self)
+            .norm
+        )
+
     def limit(self, mag):
         if self.norm > mag:
             self.set_mag(mag)
@@ -84,6 +92,9 @@ class Vector:
         self.y = length * sin(angle)
 
         return self
+
+    def copy(self):
+        return Vector().set(self)
 
     x = property(get_x, set_x)
     y = property(get_y, set_y)

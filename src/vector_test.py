@@ -162,3 +162,17 @@ def test_set():
 
     assert a.x == b.x
     assert a.y == b.y
+
+
+def test_dist():
+    a = Vector(1, 1)
+    b = Vector(1, 2)
+
+    assert a.dist(b) == 1
+    assert b.dist(a) == 1
+
+    a = Vector(2, 3)
+    b = Vector(5, 7)
+
+    assert a.dist(b) == 5
+    assert b.dist(a) == 5
