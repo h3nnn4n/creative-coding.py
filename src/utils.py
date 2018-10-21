@@ -1,4 +1,8 @@
+import string
+
 from colormath.color_objects import sRGBColor, LCHuvColor, XYZColor
+from datetime import datetime
+from random import sample
 
 
 def lerp(a, b, c):
@@ -72,3 +76,29 @@ def tuple_to_LCHuvColor(a):
 
 def tuple_to_XYZColor(a):
     return XYZColor(a[0], a[1], a[2])
+
+
+def random_name(prefix=None, suffix=None, extension='png'):
+    name = ''
+
+    now = datetime.now()
+    char_set = string.ascii_uppercase + string.digits
+    r_string = ''.join(sample(char_set * 6, 6))
+    time_string = '-'.join(map(str, [
+        now.year, now.month, now.day, now.hour, now.minute, now.second
+    ]))
+
+    if prefix is not None:
+        name += prefix
+        name = '_'.join([name, time_string])
+    else:
+        name += time_string
+
+    name = '_'.join([name, r_string])
+
+    if suffix is not None:
+        name = '_'.join([name, suffix])
+
+    name = '.'.join([name, extension])
+
+    return name
