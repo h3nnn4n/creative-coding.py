@@ -5,9 +5,21 @@ def lerp(a, b, c):
     return (a * c) + (1 - c) * b
 
 
-def normalize_rgb(r, g=None, b=None):
+def normalize_rgb(r, g=None, b=None, a=None):
     if type(r) is tuple:
-        r, g, b = r
+        if len(r) == 3:
+            return normalize_rgb_(r)
+        else:
+            return normalize_rgba_(r)
+
+    if a is None:
+        return normalize_rgb_((r, g, b))
+
+    return normalize_rgba_((r, g, b, a))
+
+
+def normalize_rgb_(color):
+    r, g, b = color
 
     if max(r, g, b) > 1:
         r /= 255
@@ -15,6 +27,18 @@ def normalize_rgb(r, g=None, b=None):
         b /= 255
 
     return r, g, b
+
+
+def normalize_rgba_(color):
+    r, g, b, a = color
+
+    if max(r, g, b) > 1:
+        r /= 255
+        g /= 255
+        b /= 255
+        a /= 255
+
+    return r, g, b, a
 
 
 def color_lerp(a, b, v):

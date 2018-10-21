@@ -32,6 +32,8 @@ class ContextManager:
         return self
 
     def set_background(self, r=1, g=1, b=1):
+        if type(r) is tuple:
+            r, g, b, _ = r
         self.set_source_rgb(r, g, b)
         self.ctx.rectangle(0, 0, self.width, self.height)
         self.ctx.fill()
@@ -42,7 +44,10 @@ class ContextManager:
         self.surface.write_to_png(name)
 
     def set_source_rgb(self, r=1, g=1, b=1, a=1):
-        r, g, b = normalize_rgb(r, g, b)
+        if type(r) == tuple:
+            r, g, b, a = normalize_rgb(r)
+        else:
+            r, g, b, a = normalize_rgb(r, g, b, a)
         self.ctx.set_source_rgba(r, g, b, a)
 
     def lerp_rgb(self, a, b, p, mode='lch'):
