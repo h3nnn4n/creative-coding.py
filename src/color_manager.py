@@ -5,7 +5,10 @@ class ColorManager:
             'thistle': (216, 191, 216),  # #d8bfd8
             'orange red': (255, 69, 0),  # #ff4500
             'powder blue': (176, 224, 230),  # #b0e0e6
-            'steel blue': (70, 130, 180)  # #4682b4
+            'steel blue': (70, 130, 180),  # #4682b4
+            'azure': (240, 255, 255),  # #f0ffff
+            'honeydew': (240, 255, 240),  # #f0fff0
+            'green yellow': (173, 255, 47),  # #adff2f
         }
 
     def get_color(self, key, alpha=1.0, normalized=True):
