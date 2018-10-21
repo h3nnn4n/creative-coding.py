@@ -40,6 +40,12 @@ class Particle:
 
         return self
 
+    def set_position(self, x, y):
+        self.position.x = x
+        self.position.y = y
+
+        return self
+
     def stop(self):
         self.velocity.zero()
         self.acceleration.zero()
