@@ -1,6 +1,7 @@
 from context_manager import ContextManager
 from color_manager import ColorManager
 from vector_field_background import VectorFieldBackground
+from random_controller import RandomController
 from particle import Particle
 from utils import lerp, random_name
 from random import uniform
@@ -54,11 +55,11 @@ class Subdivision:
         ctx.close_path()
         ctx.set_line_width(1)
         self.context.set_source_rgb(
-            ColorManager().get_color(self.color_name, alpha=alpha * 2)
+            ColorManager().get_color(self.color_name, alpha=alpha * 3.0)
         )
         ctx.stroke_preserve()
         self.context.set_source_rgb(
-            ColorManager().get_color(self.color_name, alpha=alpha)
+            ColorManager().get_color(self.color_name, alpha=alpha * 1.25)
         )
         ctx.fill()
 
@@ -89,6 +90,7 @@ def main():
     context.set_background(
         ColorManager().get_color('cornsilk')
     )
+
     (
         VectorFieldBackground(context=context)
         .set_noise_block_width(5)
@@ -105,6 +107,7 @@ def main():
 
     diff = 5
 
+    seed1 = RandomController(seed=91853102659420).seed
     subdivision \
         .spawn_particles() \
         .set_color('steel blue') \
@@ -112,8 +115,9 @@ def main():
             (context.width * 0.5 - diff, context.height * 0.1),
             (context.width * 0.3 - diff, context.height * 0.5),
             (context.width * 0.5 - diff, context.height * 0.9)]) \
-        .step(n=12)
+        .step(n=10)
 
+    seed2 = RandomController(seed=175998433254365).seed
     subdivision \
         .spawn_particles() \
         .set_color('orange red') \
@@ -121,10 +125,10 @@ def main():
             (context.width * 0.5 + diff, context.height * 0.1),
             (context.width * 0.7 + diff, context.height * 0.5),
             (context.width * 0.5 + diff, context.height * 0.9)]) \
-        .step(n=12)
+        .step(n=10)
 
     context.save(random_name(
-        prefix='subdivision'
+        prefix='subdivision_%s_%s' % (seed1, seed2)
     ))
 
 if __name__ == '__main__':

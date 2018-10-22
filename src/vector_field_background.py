@@ -141,16 +141,17 @@ class VectorFieldBackground:
         if random() < 0.35:
             return
 
+        color_blend = 0.95
         half_block = self.noise_block_width / 2
         self.context_manager.set_source_rgb(
             color_lerp(
                 color_lerp(
                     ColorManager().get_color('cornsilk'),
                     (0, 0, 0),
-                    0.975
+                    color_blend
                 ),
                 (1, 1, 1),
-                0.975
+                color_blend
             )
         )
         ctx = self.context_manager.ctx
