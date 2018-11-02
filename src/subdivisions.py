@@ -5,6 +5,7 @@ from random_controller import RandomController
 from particle import Particle
 from utils import lerp, random_name
 from random import uniform
+from math import sqrt, floor
 
 
 class Subdivision:
@@ -86,7 +87,14 @@ class Subdivision:
 
 
 def main():
+    width = int(floor(1000))
+    height = int(floor(width * sqrt(2)))
     context = ContextManager()
+    context.set_resolution(
+        width=width,
+        height=height,
+        scale=4
+    ).create_surface()
     context.set_background(
         ColorManager().get_color('cornsilk')
     )
