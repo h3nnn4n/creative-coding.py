@@ -1,5 +1,6 @@
 import numpy as np
 from math import cos, sin, pi, atan2
+from random import uniform
 
 
 class Vector:
@@ -94,6 +95,12 @@ class Vector:
     def from_angle(self, angle, length=1):
         self.x = length * cos(angle)
         self.y = length * sin(angle)
+
+        return self
+
+    def random(self):
+        self.x = uniform(-1, 1)
+        self.y = uniform(-1, 1)
 
         return self
 
