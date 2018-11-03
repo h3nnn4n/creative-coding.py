@@ -83,3 +83,8 @@ class Particle:
 
     def apply_force(self, force):
         self.acceleration += force
+        return self
+
+    def set_velocity(self, velocity):
+        self.velocity.set(velocity)
+        return self
