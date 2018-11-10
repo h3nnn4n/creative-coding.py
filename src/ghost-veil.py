@@ -4,7 +4,7 @@ from vector_field_background import VectorFieldBackground
 from random_controller import RandomController
 from particle import Particle
 from vector import Vector
-from utils import lerp, random_name
+from utils import lerp, random_name, add_alpha_to_color
 from random import uniform
 from math import sqrt, floor, pi
 
@@ -19,6 +19,7 @@ class GhostVeil:
 
         self.color_name = 'thistle'
         self.color = None
+        self.alpha = None
 
     def spawn_particle(self):
         return Particle()
@@ -37,11 +38,17 @@ class GhostVeil:
         self.color = color
         return self
 
+    def set_alpha(self, alpha):
+        self.alpha = alpha
+        return self
+
     def get_color(self, alpha=1):
         if self.color is None:
             return ColorManager().get_color(self.color_name, alpha=alpha)
         else:
-            return self.color
+            if self.alpha is None:
+                return self.color
+            return add_alpha_to_color(self.color, self.alpha)
 
     def draw(self, alpha=1):
         ctx = self.context.ctx
@@ -51,7 +58,7 @@ class GhostVeil:
                 ctx = self.context.ctx
                 ctx.set_line_width(1)
                 self.context.set_source_rgb(
-                    self.get_color(alpha=alpha)
+                    self.get_color()
                 )
 
                 ctx.move_to(
@@ -112,8 +119,11 @@ def main():
         height=context.height
     )
 
-    dx = height * 0.1
+    dx = height * 0.05
     max_value = floor(height / dx)
+    alpha = 0.125
+
+    ghost_veil.set_alpha(alpha)
 
     for i in range(max_value):
         color = context.lerp_rgb(
@@ -124,10 +134,10 @@ def main():
         )
 
         ghost_veil \
-            .spawn_particles(n_particles=10) \
+            .spawn_particles(n_particles=25) \
             .set_color(color=color) \
             .initial_placement(height=dx * i + dx * 0.5) \
-            .step(n=25)
+            .step(n=100)
 
     # context.save(random_name(
     #     prefix='ghost-veil'

@@ -45,6 +45,10 @@ def normalize_rgba_(color):
     return r, g, b, a
 
 
+def add_alpha_to_color(color, alpha):
+    return (color[0], color[1], color[2], alpha)
+
+
 def color_lerp(a, b, v):
     if type(a) is not tuple:
         a = color_to_tuple(a)
