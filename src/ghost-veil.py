@@ -18,6 +18,7 @@ class GhostVeil:
         self.particles = []
 
         self.color_name = 'thistle'
+        self.color = None
 
     def spawn_particle(self):
         return Particle()
@@ -31,34 +32,26 @@ class GhostVeil:
         ]
         return self
 
-    def set_color(self, color_name):
+    def set_color(self, color_name='', color=None):
         self.color_name = color_name
+        self.color = color
         return self
+
+    def get_color(self, alpha=1):
+        if self.color is None:
+            return ColorManager().get_color(self.color_name, alpha=alpha)
+        else:
+            return self.color
 
     def draw(self, alpha=1):
         ctx = self.context.ctx
         ctx.set_line_width(1)
-        for i, particle in enumerate(self.particles):
-            # self.context.set_source_rgb(
-            #     ColorManager().get_color('orange red')
-            # )
-
-            # ctx.arc(
-            #     particle.position.x,
-            #     particle.position.y,
-            #     2,
-            #     0,
-            #     2.0 * pi
-            # )
-
-            # ctx.fill_preserve()
-            # ctx.stroke()
-
+        for i, _ in enumerate(self.particles):
             if i > 0:
                 ctx = self.context.ctx
                 ctx.set_line_width(1)
                 self.context.set_source_rgb(
-                    ColorManager().get_color('orange red', alpha=alpha)
+                    self.get_color(alpha=alpha)
                 )
 
                 ctx.move_to(
@@ -73,9 +66,13 @@ class GhostVeil:
 
                 ctx.stroke()
 
-    def initial_placement(self):
+    def initial_placement(self, height=None):
+        if height is None:
+            posy = self.height / 2.0
+        else:
+            posy = height
+
         posx = 0
-        posy = self.height / 2.0
 
         for i in range(self.n_particles):
             posx = i * self.width / self.n_particles + (self.width / self.n_particles) * 0.5
@@ -115,12 +112,22 @@ def main():
         height=context.height
     )
 
-    # seed1 = RandomController(seed=None).seed
-    ghost_veil \
-        .spawn_particles(n_particles=100) \
-        .set_color('steel blue') \
-        .initial_placement() \
-        .step(n=50)
+    dx = height * 0.1
+    max_value = floor(height / dx)
+
+    for i in range(max_value):
+        color = context.lerp_rgb(
+            ColorManager().get_color('orange red'),
+            ColorManager().get_color('steel blue'),
+            (i / max_value),
+            mode='lch'
+        )
+
+        ghost_veil \
+            .spawn_particles(n_particles=10) \
+            .set_color(color=color) \
+            .initial_placement(height=dx * i + dx * 0.5) \
+            .step(n=25)
 
     # context.save(random_name(
     #     prefix='ghost-veil'
