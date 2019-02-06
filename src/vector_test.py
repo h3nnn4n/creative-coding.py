@@ -1,64 +1,54 @@
 import pytest
 from vector import Vector
 from math import pi
+from hypothesis import given
+import hypothesis.strategies as st
 
 
-def test_add():
-    a = Vector(1, 2)
-    b = Vector(3, 4)
+@given(x1=st.integers(), y1=st.integers(), x2=st.integers(), y2=st.integers())
+def test_add(x1, y1, x2, y2):
+    a = Vector(x1, y1)
+    b = Vector(x2, y2)
 
     c = a + b
 
-    assert c.x == 4
-    assert c.y == 6
-
-    assert a.x == 1
-    assert a.y == 2
-
-    assert b.x == 3
-    assert b.y == 4
+    assert c.x == a.x + b.x
+    assert c.y == a.y + b.y
 
 
-def test_sub():
-    a = Vector(1, 2)
-    b = Vector(3, 4)
+@given(x1=st.integers(), y1=st.integers(), x2=st.integers(), y2=st.integers())
+def test_sub(x1, y1, x2, y2):
+    a = Vector(x1, y1)
+    b = Vector(x2, y2)
 
     c = a - b
 
-    assert c.x == -2
-    assert c.y == -2
-
-    assert a.x == 1
-    assert a.y == 2
-
-    assert b.x == 3
-    assert b.y == 4
+    assert c.x == a.x - b.x
+    assert c.y == a.y - b.y
 
 
-def test_iadd():
-    a = Vector(1, 2)
-    b = Vector(3, 4)
+@given(x1=st.integers(), y1=st.integers(), x2=st.integers(), y2=st.integers())
+def test_iadd(x1, y1, x2, y2):
+    a = Vector(x1, y1)
+    b = Vector(x2, y2)
+    c = a.copy()
 
     a += b
 
-    assert a.x == 4
-    assert a.y == 6
-
-    assert b.x == 3
-    assert b.y == 4
+    assert a.x == c.x + b.x
+    assert a.y == c.y + b.y
 
 
-def test_isub():
-    a = Vector(1, 2)
-    b = Vector(3, 4)
+@given(x1=st.integers(), y1=st.integers(), x2=st.integers(), y2=st.integers())
+def test_isub(x1, y1, x2, y2):
+    a = Vector(x1, y1)
+    b = Vector(x2, y2)
+    c = a.copy()
 
     a -= b
 
-    assert a.x == -2
-    assert a.y == -2
-
-    assert b.x == 3
-    assert b.y == 4
+    assert a.x == c.x - b.x
+    assert a.y == c.y - b.y
 
 
 def test_setter():
