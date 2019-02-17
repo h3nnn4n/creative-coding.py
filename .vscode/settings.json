@@ -1,3 +1,13 @@
 {
-    "python.pythonPath": "/usr/local/bin/python3"
+    "python.pythonPath": "/Users/renanssilva/.local/share/virtualenvs/creative_coding-ZRKCu6yz/bin/python",
+
+    "python.linting.pylintEnabled": true,
+    // "python.linting.flake8Enabled": true,
+    // "python.linting.flake8Args": ["--max-line-length=120"],
+
+    "python.formatting.provider": "autopep8",
+    "python.formatting.autopep8Args": ["--aggressive", "--aggressive", "--max-line-length=119"],
+    // "python.formatting.blackPath": "${workspaceRoot}/.venv/bin/black",
+    // "python.formatting.blackArgs": ["--line-length=120"],
+    "editor.formatOnSave": true,
 }

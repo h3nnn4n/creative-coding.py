@@ -10,7 +10,7 @@ def lerp(a, b, c):
 
 
 def normalize_rgb(r, g=None, b=None, a=None):
-    if type(r) is tuple:
+    if isinstance(r, tuple):
         if len(r) == 3:
             return normalize_rgb_(r)
         else:
@@ -50,10 +50,10 @@ def add_alpha_to_color(color, alpha):
 
 
 def color_lerp(a, b, v):
-    if type(a) is not tuple:
+    if not isinstance(a, tuple):
         a = color_to_tuple(a)
 
-    if type(b) is not tuple:
+    if not isinstance(b, tuple):
         b = color_to_tuple(b)
 
     return (
@@ -64,13 +64,13 @@ def color_lerp(a, b, v):
 
 
 def color_to_tuple(a):
-    if type(a) is LCHuvColor:
+    if isinstance(a, LCHuvColor):
         return (a.lch_l, a.lch_c, a.lch_h)
 
-    if type(a) is sRGBColor:
+    if isinstance(a, sRGBColor):
         return (a.rgb_r, a.rgb_g, a.rgb_b)
 
-    if type(a) is XYZColor:
+    if isinstance(a, XYZColor):
         return (a.xyz_x, a.xyz_y, a.xyz_z)
 
 

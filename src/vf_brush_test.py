@@ -14,5 +14,6 @@ def main():
 
     context.save('vf_brush.png')
 
+
 if __name__ == '__main__':
     main()

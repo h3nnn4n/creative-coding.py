@@ -98,6 +98,18 @@ class GhostVeil:
 
             self.draw(alpha=0.075)
 
+    def add_middle_circle(self):
+        ctx = self.context.ctx
+        ctx.set_line_width(10)
+        self.context.set_source_rgb(ColorManager().get_color('thistle', alpha=0.75))
+
+        ctx.arc(self.height / 2, self.width / 2, 250, 0, 2 * pi)
+
+        ctx.stroke_preserve()
+
+        self.context.set_source_rgb(ColorManager().get_color('cornsilk', alpha=0.75))
+        ctx.fill()
+
 
 def main():
     width = int(floor(1000))
@@ -130,20 +142,19 @@ def main():
             ColorManager().get_color('orange red'),
             ColorManager().get_color('steel blue'),
             (i / max_value),
-            mode='lch'
+            mode='xyz'
         )
 
         ghost_veil \
-            .spawn_particles(n_particles=25) \
+            .spawn_particles(n_particles=10) \
             .set_color(color=color) \
             .initial_placement(height=dx * i + dx * 0.5) \
-            .step(n=100)
+            .step(n=125)
 
-    # context.save(random_name(
-    #     prefix='ghost-veil'
-    # ))
+    ghost_veil.add_middle_circle()
 
     context.save('ghost-veil.png')
+
 
 if __name__ == '__main__':
     main()

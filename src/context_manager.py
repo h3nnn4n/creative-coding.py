@@ -32,7 +32,7 @@ class ContextManager:
         return self
 
     def set_background(self, r=1, g=1, b=1):
-        if type(r) is tuple:
+        if isinstance(r, tuple):
             r, g, b, _ = r
         self.set_source_rgb(r, g, b)
         self.ctx.rectangle(0, 0, self.width, self.height)
@@ -44,7 +44,7 @@ class ContextManager:
         self.surface.write_to_png(name)
 
     def set_source_rgb(self, r=1, g=1, b=1, a=1):
-        if type(r) == tuple:
+        if isinstance(r, tuple):
             if len(r) == 3:
                 r, g, b = normalize_rgb(r)
             else:
