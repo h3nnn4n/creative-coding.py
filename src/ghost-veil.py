@@ -2,6 +2,7 @@ from context_manager import ContextManager
 from color_manager import ColorManager
 from vector_field_background import VectorFieldBackground
 from random_controller import RandomController
+from klauber_triangle import KlauberTriangle
 from particle import Particle
 from vector import Vector
 from utils import lerp, random_name, add_alpha_to_color
@@ -131,6 +132,12 @@ def main():
         height=context.height
     )
 
+    klauber_triangle = KlauberTriangle(
+        context=context,
+        width=context.width,
+        height=context.height
+    )
+
     dx = height * 0.05
     max_value = floor(height / dx)
     alpha = 0.125
@@ -152,6 +159,8 @@ def main():
             .step(n=125)
 
     ghost_veil.add_middle_circle()
+
+    klauber_triangle.draw(width / 2, height * 0.425, 24)
 
     context.save('ghost-veil.png')
 
