@@ -1,5 +1,7 @@
 import numpy as np
 from math import pi, sin, cos
+from random import uniform
+from color_manager import ColorManager
 
 
 class KlauberTriangle():
@@ -14,16 +16,17 @@ class KlauberTriangle():
         self.calculate_prime_matrix(size)
 
         ctx = self.context.ctx
-        ctx.set_line_width(2.5)
 
         width = (block_size + space)
 
         x_offset = width * self.ncols / 2
         y_offset = width * self.nrows / 2
 
-        # self.background_triangle(center_x, center_y, 250)
+        # self.background_triangle(center_x, center_y, x_offset, y_offset)
 
-        self.context.set_source_rgb(175, 50, 50, 100)
+        ctx.set_line_width(2.5)
+        # self.context.set_source_rgb(175, 50, 50, 100)
+        # self.context.set_source_rgb(ColorManager().get_color('thistle'))
 
         for i in range(self.nrows):
             for j in range(self.ncols):
@@ -32,10 +35,22 @@ class KlauberTriangle():
 
                 if self.prime_grid[i, j]:
                     # ctx.rectangle(x, y, block_size, block_size)
-                    ctx.arc(x, y, block_size / 2, 0, 2 * pi)
-                    ctx.stroke()
+                    color = self.context.lerp_rgb(
+                        ColorManager().get_color('orange red'),
+                        ColorManager().get_color('steel blue'),
+                        (uniform(0, 1)),
+                        mode='xyz'
+                    )
 
-    def background_triangle(self, center_x, center_y, x_offset, y_offset, radius):
+                    self.context.set_source_rgb((*color, uniform(0.55, 0.9)))
+
+                    ctx.arc(x, y, block_size / 2, 0, 2 * pi)
+                    if uniform(0, 1) < 0.5:
+                        ctx.stroke()
+                    else:
+                        ctx.fill()
+
+    def background_triangle(self, center_x, center_y, x_offset, y_offset):
         ctx = self.context.ctx
 
         self.context.set_source_rgb(155, 58, 20, 75)
@@ -45,6 +60,8 @@ class KlauberTriangle():
         ctx.line_to(center_x + x_offset, center_y + y_offset)
         ctx.line_to(center_x - x_offset, center_y + y_offset)
         ctx.line_to(center_x, center_y - y_offset)
+
+        ctx.stroke()
 
     def calculate_prime_matrix(self, size):
         n = size
