@@ -15,6 +15,7 @@ pylint = "*"
 "pep8" = "*"
 pytest = "*"
 hypothesis = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.7"
