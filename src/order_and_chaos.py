@@ -10,7 +10,7 @@ from random import uniform
 from math import sqrt, floor, pi
 
 
-class GhostVeil:
+class OrderAndChaos:
     def __init__(self, context=None, width=1, height=1):
         self.width = width
         self.height = height
@@ -126,7 +126,7 @@ def main():
         ColorManager().get_color('cornsilk')
     )
 
-    ghost_veil = GhostVeil(
+    order_and_chaos = OrderAndChaos(
         context=context,
         width=context.width,
         height=context.height
@@ -142,7 +142,7 @@ def main():
     max_value = floor(height / dx)
     alpha = 0.125
 
-    ghost_veil.set_alpha(alpha)
+    order_and_chaos.set_alpha(alpha)
 
     for i in range(max_value):
         color = context.lerp_rgb(
@@ -152,17 +152,17 @@ def main():
             mode='xyz'
         )
 
-        ghost_veil \
+        order_and_chaos \
             .spawn_particles(n_particles=10) \
             .set_color(color=color) \
             .initial_placement(height=dx * i + dx * 0.5) \
             .step(n=125)
 
-    ghost_veil.add_middle_circle()
+    order_and_chaos.add_middle_circle()
 
     klauber_triangle.draw(width / 2, height * 0.425, 24)
 
-    context.save('ghost-veil.png')
+    context.save('order_and_chaos.jpg')
 
 
 if __name__ == '__main__':
