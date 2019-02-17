@@ -162,7 +162,7 @@ def main():
 
     klauber_triangle.draw(width / 2, height * 0.425, 24)
 
-    context.save('order_and_chaos.jpg')
+    context.save('order_and_chaos.png')
 
 
 if __name__ == '__main__':
