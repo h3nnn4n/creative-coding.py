@@ -8,6 +8,7 @@ pycairo = "*"
 colormath = "*"
 noise = "*"
 scipy = "*"
+cmapy = "*"
 
 [dev-packages]
 "autopep8" = "*"
