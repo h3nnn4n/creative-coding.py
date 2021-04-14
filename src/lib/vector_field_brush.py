@@ -4,18 +4,16 @@ import os
 
 import numpy as np
 
-from context_manager import ContextManager
-from color_manager import ColorManager
-from vector import Vector
-from particle import Particle
+from .context_manager import ContextManager
+from .vector import Vector
+from .particle import Particle
 
 from noise import snoise2, pnoise2
 from random import random, uniform, seed
 from math import pi, sin, cos, sqrt, ceil, floor
-from utils import color_lerp
 
 
-class VectorFieldBackground:
+class VectorFieldBrush:
     def __init__(self, context=None):
         if context is None:
             self.context_manager = ContextManager()
@@ -25,18 +23,24 @@ class VectorFieldBackground:
         self.ctx = self.context_manager.ctx
         self.surface = self.context_manager.surface
         self.scale = self.context_manager.scale
-        self.width = self.context_manager.width
-        self.height = self.context_manager.height
+        self.width = None
+        self.height = None
 
         self.color = (255, 0, 0)
 
         self.noise_scale = 0.0125
-        self.noise_block_width = 2
+        self.noise_block_width = 1
         self.noise_map = np.zeros((
             self.context_manager.width,
             self.context_manager.height
         ))
         self.noise_initialized = False
+
+        self.particle_life = 12
+        self.particle_max_velocity = 4
+
+        self.n_particles = 100
+        self.particles = []
 
     def __getitem__(self, key):
         x, y = key
@@ -58,6 +62,34 @@ class VectorFieldBackground:
     def set_noise_block_width(self, width):
         self.noise_block_width = width
         return self
+
+    def set_particle_life(self, life):
+        self.particle_life = life
+        return self
+
+    def set_particle_max_velocity(self, max_velocity):
+        self.particle_max_velocity = max_velocity
+        return self
+
+    def spawn_particle(self):
+        return (
+            Particle().set_bounds(Vector(self.width, self.height))
+                      .random_position(self.width, self.height)
+                      .set_life(self.particle_life)
+                      .set_max_velocity(self.particle_max_velocity)
+                      .set_color(self.get_color)
+        )
+
+    def spawn_particles(self):
+        self.particles = [
+            self.spawn_particle()
+            for _ in range(self.n_particles)
+        ]
+
+        return self
+
+    def get_color(self, _):
+        return self.color
 
     def init_noise(self, mode='perlin'):
         if mode == 'perlin':
@@ -106,7 +138,6 @@ class VectorFieldBackground:
                 )
                 self.ctx.stroke_preserve()
                 self.ctx.fill()
-        return self
 
     def update_noise_interval(self):
         low = float('inf')
@@ -129,52 +160,59 @@ class VectorFieldBackground:
         if angle is None:
             return None
 
-        return Vector().from_angle(angle).set_mag(1)
+        return Vector().from_angle(angle).set_mag(2)
 
-    def draw_vectors(self):
-        for i in range(ceil(self.width / self.noise_block_width)):
-            for j in range(ceil(self.height / self.noise_block_width)):
-                self.draw_vector(i, j)
-        return self
+    def step(self, n=1, log_interval=None):
+        if len(self.particles) == 0:
+            self.spawn_particles()
 
-    def draw_vector(self, x, y):
-        if random() < 0.35:
-            return
+        if not self.noise_initialized:
+            self.init_noise()
 
-        color_blend = 0.95
-        half_block = self.noise_block_width / 2
+        if log_interval is not None:
+            print('step %6.2f%%' % (0))
+
+        for i in range(n):
+            for particle in self.particles:
+                if not particle.alive:
+                    continue
+
+                particle.apply_force(self.get_force(particle.position))
+                particle.step()
+                self.draw_particle(particle)
+
+            if log_interval is not None and (i % log_interval == 0 or i == n - 1) and i > 0:
+                print('step %6.2f%%' % ((i / n) * 100))
+
+            for k, v in enumerate(self.particles):
+                if not v.alive:
+                    self.particles[k] = self.spawn_particle()
+
+        print('step %6.2f%%' % (100))
+
+    def draw_particle(self, particle):
+        color_scale = 0.75
         self.context_manager.set_source_rgb(
-            color_lerp(
-                color_lerp(
-                    ColorManager().get_color('cornsilk'),
-                    (0, 0, 0),
-                    color_blend
-                ),
-                (1, 1, 1),
-                color_blend
-            )
+            particle.color[0] * color_scale,
+            particle.color[1] * color_scale,
+            particle.color[2] * color_scale,
+            0.125 * 0.65
         )
-        ctx = self.context_manager.ctx
-        ctx.set_line_width(1)
-        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        self.ctx.set_line_width(1)
+        self.ctx.move_to(particle.position_old.x, particle.position_old.y)
+        self.ctx.line_to(particle.position.x, particle.position.y)
+        self.ctx.stroke()
 
-        from_x = x * self.noise_block_width + half_block
-        from_y = y * self.noise_block_width + half_block
+    def circle(self, center_x, center_y, radius, color, steps=250):
+        ctx = self.ctx
+        self.color = color
+        self.set_bounds(radius * 2, radius * 2)
+        self.spawn_particles()
 
-        # ctx.save()
-        # ctx.translate(from_x, from_y)
-        to_x, to_y = (
-            self.get_force(Vector(from_x, from_y))
-            .set_mag(self.noise_block_width * 0.8)
-            .data
-        )
-        # ctx.move_to(from_x, from_y)
-        # ctx.line_to(from_x + to_x, from_y + to_y)
-        ctx.arc(from_x + to_x, from_y + to_y, half_block, 0, 2.0 * pi)
-        # print(from_x, from_y, to_x, to_y)
-
-        if random() < 0.15:
-            ctx.fill_preserve()
-
-        ctx.stroke()
-        # ctx.restore()
+        ctx.save()
+        ctx.translate(center_x, center_y)
+        ctx.arc(radius, radius, radius, 0, 2 * pi)
+        ctx.clip()
+        self.step(n=steps)
+        ctx.reset_clip()
+        ctx.restore()

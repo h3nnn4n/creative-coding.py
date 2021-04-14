@@ -1,6 +1,6 @@
 from random import random
 
-from vector import Vector
+from .vector import Vector
 
 
 class Particle:

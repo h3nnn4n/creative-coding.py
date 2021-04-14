@@ -1,5 +1,5 @@
-from context_manager import ContextManager
-from vector_field_brush import VectorFieldBrush
+from lib.context_manager import ContextManager
+from lib.vector_field_brush import VectorFieldBrush
 
 
 def main():

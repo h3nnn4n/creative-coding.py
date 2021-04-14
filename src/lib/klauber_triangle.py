@@ -1,7 +1,9 @@
 import numpy as np
+
 from math import pi, sin, cos
 from random import uniform
-from color_manager import ColorManager
+
+from .color_manager import ColorManager
 
 
 class KlauberTriangle():

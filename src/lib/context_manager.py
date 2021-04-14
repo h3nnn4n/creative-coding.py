@@ -3,7 +3,7 @@ import cairo
 
 from colormath.color_conversions import convert_color
 from colormath.color_objects import sRGBColor, LCHuvColor, XYZColor
-from utils import lerp, color_lerp, normalize_rgb, tuple_to_LCHuvColor, \
+from .utils import lerp, color_lerp, normalize_rgb, tuple_to_LCHuvColor, \
     tuple_to_XYZColor, color_to_tuple
 
 

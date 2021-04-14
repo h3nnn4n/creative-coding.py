@@ -1,11 +1,12 @@
-from context_manager import ContextManager
-from color_manager import ColorManager
-from vector_field_background import VectorFieldBackground
-from random_controller import RandomController
-from particle import Particle
-from utils import lerp, random_name
 from random import uniform
 from math import sqrt, floor
+
+from lib.context_manager import ContextManager
+from lib.color_manager import ColorManager
+from lib.vector_field_background import VectorFieldBackground
+from lib.random_controller import RandomController
+from lib.particle import Particle
+from lib.utils import lerp, random_name
 
 
 class Subdivision:

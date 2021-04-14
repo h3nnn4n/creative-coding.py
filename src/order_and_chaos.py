@@ -1,13 +1,14 @@
-from context_manager import ContextManager
-from color_manager import ColorManager
-from vector_field_background import VectorFieldBackground
-from random_controller import RandomController
-from klauber_triangle import KlauberTriangle
-from particle import Particle
-from vector import Vector
-from utils import lerp, random_name, add_alpha_to_color
 from random import uniform
 from math import sqrt, floor, pi
+
+from lib.context_manager import ContextManager
+from lib.color_manager import ColorManager
+from lib.vector_field_background import VectorFieldBackground
+from lib.random_controller import RandomController
+from lib.klauber_triangle import KlauberTriangle
+from lib.particle import Particle
+from lib.vector import Vector
+from lib.utils import lerp, random_name, add_alpha_to_color
 
 
 class OrderAndChaos:
