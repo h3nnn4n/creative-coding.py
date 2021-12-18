@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "creative-coding"
+version = "0.1.0"
+description = ""
+authors = ["h3nnn4n <uber.renan@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+pycairo = "*"
+colormath = "*"
+noise = "*"
+scipy = "*"
+cmapy = "*"
+
+[tool.poetry.dev-dependencies]
+autopep8 = "*"
+pylint = "*"
+pep8 = "*"
+pytest = "*"
+hypothesis = "*"
+ipdb = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
