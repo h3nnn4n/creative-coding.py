@@ -23,6 +23,7 @@ class ColorManager:
                 *self.normalized(self.colors[key]),
                 alpha
             )
+        raise IndexError(f"Color not found: {key}")
 
     def normalized(self, color):
         if max(color) > 1:
