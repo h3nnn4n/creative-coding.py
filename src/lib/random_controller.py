@@ -4,6 +4,7 @@ import random
 
 class RandomController:
     def __init__(self, seed=None):
+        self.seed = None
         if seed is None:
             self.set_random_seed()
         else:
