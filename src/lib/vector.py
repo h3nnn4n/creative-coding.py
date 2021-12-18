@@ -17,6 +17,10 @@ class Vector:
         self.data[1] = y
         return self
 
+    def set(self, x, y):
+        self.data[0] = x
+        self.data[1] = y
+
     def get_x(self):
         return self.data[0]
 
