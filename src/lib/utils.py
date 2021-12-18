@@ -106,3 +106,11 @@ def random_name(prefix=None, suffix=None, extension='png'):
     name = '.'.join([name, extension])
 
     return name
+
+
+def signal(value):
+    if value > 0:
+        return 1
+    if value < 0:
+        return -1
+    return 0
