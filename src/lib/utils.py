@@ -93,7 +93,7 @@ def random_name(prefix=None, suffix=None, extension='png'):
     ]))
 
     if prefix is not None:
-        name += prefix
+        name += str(prefix)
         name = '_'.join([name, time_string])
     else:
         name += time_string
@@ -101,7 +101,7 @@ def random_name(prefix=None, suffix=None, extension='png'):
     name = '_'.join([name, r_string])
 
     if suffix is not None:
-        name = '_'.join([name, suffix])
+        name = '_'.join([name, str(suffix)])
 
     name = '.'.join([name, extension])
 
