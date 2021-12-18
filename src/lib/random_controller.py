@@ -14,7 +14,6 @@ class RandomController:
         random_data = os.urandom(6)
         seed = int.from_bytes(random_data, byteorder="big")
         random.seed(seed)
-        print('seed(%d)' % seed)
 
         self.seed = seed
 
